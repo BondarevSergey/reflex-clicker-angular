@@ -1,22 +1,26 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalService } from '../../services/modal.service';
 import { FormFieldErrorsComponent } from '../../common/form-field-errors/form-field-errors.component';
 import { FormFieldComponent } from '../../common/form-field/form-field.component';
 import { FieldInputDirective } from '../../common/form-field/directives/field-input.directive';
-import { CellState, DEFAULT_CELLS, GameResult, WIN_SCORE } from '../../constants/game.consts';
+import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from './game.consts';
 
 @Component({
     selector: 'app-game',
     templateUrl: './game.component.html',
     styleUrl: './game.component.scss',
-    imports: [FormsModule, ReactiveFormsModule, FieldInputDirective, FormFieldComponent, FormFieldErrorsComponent],
+    imports: [ReactiveFormsModule, FieldInputDirective, FormFieldComponent, FormFieldErrorsComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class GameComponent {
     readonly _modalService = inject(ModalService);
 
+    /**
+     * Time limit for getting a cell by player
+     * Field is disabled until the game is active
+     */
     public timeLimit = new FormControl(1000, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(500)]
@@ -25,27 +29,28 @@ export class GameComponent {
     public cells = signal<CellState[]>(DEFAULT_CELLS);
     public playerScore = signal(0);
     public computerScore = signal(0);
-    public isRunning = signal(false);
 
     private activeCellIndex = signal<number | null>(null);
     private timeout: ReturnType<typeof setTimeout> | null = null;
+
+    private winner = computed<Winner | null>(() => {
+        if (this.playerScore() >= WIN_SCORE) return 'player';
+        if (this.computerScore() >= WIN_SCORE) return 'computer';
+        return null;
+    });
 
     /**
      * Start the new game
      * reset all game params
      */
     public startGame(): void {
-        if (this.timeLimit.invalid) {
-            return;
-        }
-
         this.clearTimer();
+        this.timeLimit.disable();
 
         this.cells.set(DEFAULT_CELLS);
         this.activeCellIndex.set(null);
         this.playerScore.set(0);
         this.computerScore.set(0);
-        this.isRunning.set(true);
 
         this.startRound();
     }
@@ -53,9 +58,10 @@ export class GameComponent {
     /**
      * Action on user click by cell
      * @param index iof clicked element
+     * ignore user click until input is disabled (it's disabled until game is active)
      */
     public userClickByCell(index: number): void {
-        if (!this.isRunning() || this.activeCellIndex() !== index) {
+        if (this.timeLimit.enabled || this.activeCellIndex() !== index) {
             return;
         }
 
@@ -67,7 +73,7 @@ export class GameComponent {
             return updated;
         });
 
-        this.playerScore.update((v) => v++);
+        this.playerScore.update((v) => v + 1);
         this.activeCellIndex.set(null);
 
         this.startRound();
@@ -95,8 +101,9 @@ export class GameComponent {
      * Set timeout for this cell
      */
     private startRound(): void {
-        if (!this.isRunning() || this.playerScore() === WIN_SCORE || this.computerScore() === WIN_SCORE) {
-            this.isRunning.set(false);
+        if (this.winner()) {
+            void this.openModal();
+            this.timeLimit.enable();
             return;
         }
 
@@ -128,10 +135,15 @@ export class GameComponent {
         }
     }
 
+    /**
+     * Open modal with the game result
+     */
     protected async openModal(): Promise<void> {
         const { ResultModalComponent } = await import('./result-modal/result-modal.component');
-        this._modalService.open(ResultModalComponent, { winner: 'player' }, () => {
-            this.startGame();
+        this._modalService.open(ResultModalComponent, { winner: this.winner() }, (result: boolean) => {
+            if (result) {
+                this.startGame();
+            }
         });
     }
 }
