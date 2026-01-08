@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
 @Component({
     selector: 'app-form-field-errors',
     templateUrl: './form-field-errors.component.html',
     styleUrls: ['./form-field-errors.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
 export class FormFieldErrorsComponent {
