@@ -1,0 +1,7 @@
+@if (component()) {
+    <div class="modal">
+        <div class="modal__inner">
+            <ng-container *ngComponentOutlet="component(); inputs: { data: data() }"> </ng-container>
+        </div>
+    </div>
+}
