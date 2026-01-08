@@ -4,6 +4,11 @@ export enum CellState {
     YELLOW = 'yellow',
     BLUE = 'blue'
 }
+export type Winner = 'player' | 'computer';
+
+export interface GameResult {
+    winner: Winner;
+}
 
 export const FIELD_SIZE = 100;
 export const WIN_SCORE = 10;
