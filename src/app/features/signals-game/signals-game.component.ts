@@ -1,31 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ModalService } from '../../services/modal.service';
-import { FormFieldErrorsComponent } from '../../common/form-field-errors/form-field-errors.component';
-import { FormFieldComponent } from '../../common/form-field/form-field.component';
-import { FieldInputDirective } from '../../common/form-field/directives/field-input.directive';
-import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from './game.consts';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormFieldErrorsComponent } from '../../common/components/form-field-errors/form-field-errors.component';
+import { FormFieldComponent } from '../../common/components/form-field/form-field.component';
+import { FieldInputDirective } from '../../common/components/form-field/directives/field-input.directive';
+import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from '../../common/constants/game.consts';
+import { AbstractGame } from '../../common/abstract-classes/abstract-game';
 
 @Component({
-    selector: 'app-game',
-    templateUrl: './game.component.html',
-    styleUrl: './game.component.scss',
+    selector: 'app-signals-game',
+    templateUrl: './signals-game.component.html',
+    styleUrl: './signals-game.component.scss',
     imports: [ReactiveFormsModule, FieldInputDirective, FormFieldComponent, FormFieldErrorsComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true
 })
-export class GameComponent {
-    readonly _modalService = inject(ModalService);
-
-    /**
-     * Time limit for getting a cell by player
-     * Field is disabled until the game is active
-     */
-    public timeLimit = new FormControl(1000, {
-        nonNullable: true,
-        validators: [Validators.required, Validators.min(500)]
-    });
-
+export class SignalsGameComponent extends AbstractGame {
     public cells = signal<CellState[]>(DEFAULT_CELLS);
     public playerScore = signal(0);
     public computerScore = signal(0);
@@ -139,7 +128,7 @@ export class GameComponent {
      * Open modal with the game result
      */
     protected async openModal(): Promise<void> {
-        const { ResultModalComponent } = await import('./result-modal/result-modal.component');
+        const { ResultModalComponent } = await import('../../common/components/result-modal/result-modal.component');
         this._modalService.open(ResultModalComponent, { winner: this.winner() }, (result: boolean) => {
             if (result) {
                 this.startGame();

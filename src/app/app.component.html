@@ -1,3 +1,18 @@
-<app-game />
+Project includes two ways of realization: SignalR and RxJs.
+<button class="btn" (click)="implementation.set('signals')">SignalR</button>
+<button class="btn" (click)="implementation.set('rxjs')">RxJs</button>
+
+@switch (implementation()) {
+    @case ("signals") {
+        @defer {
+            <app-signals-game />
+        }
+    }
+    @case ("rxjs") {
+        @defer {
+            <app-rx-game />
+        }
+    }
+}
 
 <app-modal-host />

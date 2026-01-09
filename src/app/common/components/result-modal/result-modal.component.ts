@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { GameResult } from '../game.consts';
+import { GameResult } from '../../constants/game.consts';
 import { ModalService } from '../../../services/modal.service';
 
 @Component({
