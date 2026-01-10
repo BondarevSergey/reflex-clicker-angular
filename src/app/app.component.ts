@@ -6,6 +6,7 @@ import { RxGameComponent } from './features/rx-game/rx-game.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
     imports: [ModalHostComponent, SignalsGameComponent, RxGameComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true

@@ -3,8 +3,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormFieldErrorsComponent } from '../../common/components/form-field-errors/form-field-errors.component';
 import { FormFieldComponent } from '../../common/components/form-field/form-field.component';
 import { FieldInputDirective } from '../../common/components/form-field/directives/field-input.directive';
-import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from '../../common/constants/game.consts';
 import { AbstractGame } from '../../common/abstract-classes/abstract-game';
+import { fillCellItemByIndex, getRandomCellIndex } from '../../common/helpers/game.helpers';
+import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from '../../common/constants/game.consts';
 
 @Component({
     selector: 'app-signals-game',
@@ -28,13 +29,16 @@ export class SignalsGameComponent extends AbstractGame {
         return null;
     });
 
+    public restartCallBack(): void {
+        this.startGame();
+    }
+
     /**
      * Start the new game
      * reset all game params
      */
     public startGame(): void {
         this.clearTimer();
-        this.timeLimit.disable();
 
         this.cells.set(DEFAULT_CELLS);
         this.activeCellIndex.set(null);
@@ -47,21 +51,15 @@ export class SignalsGameComponent extends AbstractGame {
     /**
      * Action on user click by cell
      * @param index iof clicked element
-     * ignore user click until input is disabled (it's disabled until game is active)
      */
     public userClickByCell(index: number): void {
-        if (this.timeLimit.enabled || this.activeCellIndex() !== index) {
+        if (this.activeCellIndex() || this.activeCellIndex() !== index) {
             return;
         }
 
         this.clearTimer();
 
-        this.cells.update((field) => {
-            const updated = [...field];
-            updated[index] = CellState.GREEN;
-            return updated;
-        });
-
+        this.cells.update((cells) => fillCellItemByIndex(cells, index, CellState.GREEN));
         this.playerScore.update((v) => v + 1);
         this.activeCellIndex.set(null);
 
@@ -72,12 +70,7 @@ export class SignalsGameComponent extends AbstractGame {
      * Action on timeout
      */
     private handleTimeout(): void {
-        this.cells.update((field) => {
-            const updated = [...field];
-            updated[this.activeCellIndex()!] = CellState.RED;
-            return updated;
-        });
-
+        this.cells.update((cells) => fillCellItemByIndex(cells, this.activeCellIndex()!, CellState.RED));
         this.computerScore.update((v) => v + 1);
         this.activeCellIndex.set(null);
 
@@ -91,27 +84,16 @@ export class SignalsGameComponent extends AbstractGame {
      */
     private startRound(): void {
         if (this.winner()) {
-            void this.openModal();
-            this.timeLimit.enable();
+            void this.openModal(this.winner()!);
             return;
         }
 
-        const blueIndexes = this.cells().reduce(
-            (acc: number[], cell, index) => (cell === CellState.BLUE ? [...acc, index] : acc),
-            []
-        );
-
-        const randomIndex = blueIndexes[Math.floor(Math.random() * blueIndexes.length)];
+        const randomIndex = getRandomCellIndex(this.cells());
 
         this.activeCellIndex.set(randomIndex);
+        this.cells.update((cells) => fillCellItemByIndex(cells, randomIndex, CellState.YELLOW));
 
-        this.cells.update((cell) => {
-            const copy = [...cell];
-            copy[randomIndex] = CellState.YELLOW;
-            return copy;
-        });
-
-        this.timeout = setTimeout(() => this.handleTimeout(), this.timeLimit.value);
+        this.timeout = setTimeout(() => this.handleTimeout(), this.timeLimit.valid ? this.timeLimit.value : 1000);
     }
 
     /**
@@ -122,17 +104,5 @@ export class SignalsGameComponent extends AbstractGame {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
-    }
-
-    /**
-     * Open modal with the game result
-     */
-    protected async openModal(): Promise<void> {
-        const { ResultModalComponent } = await import('../../common/components/result-modal/result-modal.component');
-        this._modalService.open(ResultModalComponent, { winner: this.winner() }, (result: boolean) => {
-            if (result) {
-                this.startGame();
-            }
-        });
     }
 }
