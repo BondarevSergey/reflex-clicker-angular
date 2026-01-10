@@ -1,4 +1,4 @@
-import { CellState } from '../constants/game.consts';
+import { CellState } from '../../models/game.model';
 
 export const fillCellItemByIndex = (array: CellState[], index: number, color: CellState): CellState[] => {
     const copy = [...array];

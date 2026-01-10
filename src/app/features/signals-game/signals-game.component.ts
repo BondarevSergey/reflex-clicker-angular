@@ -5,7 +5,8 @@ import { FormFieldComponent } from '../../common/components/form-field/form-fiel
 import { FieldInputDirective } from '../../common/components/form-field/directives/field-input.directive';
 import { AbstractGame } from '../../common/abstract-classes/abstract-game';
 import { fillCellItemByIndex, getRandomCellIndex } from '../../common/helpers/game.helpers';
-import { CellState, DEFAULT_CELLS, WIN_SCORE, Winner } from '../../common/constants/game.consts';
+import { DEFAULT_CELLS, WIN_SCORE } from '../../common/constants/game.consts';
+import { CellState, Winner } from '../../models/game.model';
 
 @Component({
     selector: 'app-signals-game',

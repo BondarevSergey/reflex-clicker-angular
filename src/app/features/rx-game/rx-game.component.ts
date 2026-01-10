@@ -22,7 +22,8 @@ import { FormFieldComponent } from '../../common/components/form-field/form-fiel
 import { FormFieldErrorsComponent } from '../../common/components/form-field-errors/form-field-errors.component';
 import { AbstractGame } from '../../common/abstract-classes/abstract-game';
 import { fillCellItemByIndex, getRandomCellIndex } from '../../common/helpers/game.helpers';
-import { CellState, GameState, initialState, WIN_SCORE } from '../../common/constants/game.consts';
+import { initialState, WIN_SCORE } from '../../common/constants/game.consts';
+import { CellState, GameState } from '../../models/game.model';
 
 @Component({
     selector: 'app-rx-game',

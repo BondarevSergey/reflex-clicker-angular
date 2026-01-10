@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ModalService } from '../../services/modal.service';
-import { Winner } from '../constants/game.consts';
+import { Winner } from '../../models/game.model';
 
 export abstract class AbstractGame {
     readonly _modalService = inject(ModalService);
