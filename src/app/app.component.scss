@@ -1,0 +1,13 @@
+.tip {
+    padding-top: 10px;
+    text-align: center;
+
+    &__action {
+        color: var(--secondary-font);
+        cursor: pointer;
+    }
+}
+
+.underline-text {
+    text-decoration-line: underline;
+}

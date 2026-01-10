@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
-import { GameResult } from '../game.consts';
 import { ModalService } from '../../../services/modal.service';
+import { GameResult } from '../../../models/game.model';
 
 @Component({
     selector: 'app-result-modal',

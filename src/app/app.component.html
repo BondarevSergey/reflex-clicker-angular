@@ -1,3 +1,29 @@
-<app-game />
+<div class="tip">
+    The project includes two ways of implementation based on
+    <span
+        class="tip__action"
+        [class.underline-text]="implementation() === 'signals'"
+        (click)="implementation.set('signals')"
+    >
+        SignalR
+    </span>
+    and
+    <span class="tip__action" [class.underline-text]="implementation() === 'rxjs'" (click)="implementation.set('rxjs')">
+        RxJs
+    </span>
+</div>
+
+@switch (implementation()) {
+    @case ("signals") {
+        @defer {
+            <app-signals-game />
+        }
+    }
+    @case ("rxjs") {
+        @defer {
+            <app-rx-game />
+        }
+    }
+}
 
 <app-modal-host />
