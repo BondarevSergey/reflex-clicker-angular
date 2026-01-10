@@ -40,7 +40,7 @@ export class RxGameComponent extends AbstractGame {
     public game$: Observable<GameState> = this.start$.pipe(
         switchMap(() =>
             of(initialState).pipe(
-                expand((state) => (state.activeCellIndex ? this.round$(state) : EMPTY)),
+                expand((state) => (!state.activeCellIndex ? this.round$(state) : EMPTY)),
                 takeWhile((s) => this.checkWinner(s), true)
             )
         ),
