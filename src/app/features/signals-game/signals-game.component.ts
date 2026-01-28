@@ -4,7 +4,6 @@ import { FormFieldErrorsComponent } from '../../common/components/form-field-err
 import { FormFieldComponent } from '../../common/components/form-field/form-field.component';
 import { FieldInputDirective } from '../../common/components/form-field/directives/field-input.directive';
 import { AbstractGame } from '../../common/abstract-classes/abstract-game';
-import { fillCellItemByIndex, getRandomCellIndex } from '../../common/helpers/game.helpers';
 import { DEFAULT_CELLS, WIN_SCORE } from '../../common/constants/game.consts';
 import { CellState, Winner } from '../../models/game.model';
 
@@ -60,7 +59,7 @@ export class SignalsGameComponent extends AbstractGame {
 
         this.clearTimer();
 
-        this.cells.update((cells) => fillCellItemByIndex(cells, index, CellState.GREEN));
+        this.cells.update((cells) => this.fillCellItemByIndex(cells, index, CellState.GREEN));
         this.playerScore.update((v) => v + 1);
         this.activeCellIndex.set(null);
 
@@ -71,7 +70,7 @@ export class SignalsGameComponent extends AbstractGame {
      * Action on timeout
      */
     private handleTimeout(): void {
-        this.cells.update((cells) => fillCellItemByIndex(cells, this.activeCellIndex()!, CellState.RED));
+        this.cells.update((cells) => this.fillCellItemByIndex(cells, this.activeCellIndex()!, CellState.RED));
         this.computerScore.update((v) => v + 1);
         this.activeCellIndex.set(null);
 
@@ -89,10 +88,10 @@ export class SignalsGameComponent extends AbstractGame {
             return;
         }
 
-        const randomIndex = getRandomCellIndex(this.cells());
+        const randomIndex = this.getRandomCellIndex(this.cells());
 
         this.activeCellIndex.set(randomIndex);
-        this.cells.update((cells) => fillCellItemByIndex(cells, randomIndex, CellState.YELLOW));
+        this.cells.update((cells) => this.fillCellItemByIndex(cells, randomIndex, CellState.YELLOW));
 
         this.timeout = setTimeout(() => this.handleTimeout(), this.timeLimit.valid ? this.timeLimit.value : 1000);
     }

@@ -1,9 +1,9 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ModalService } from '../../services/modal.service';
 import { DEFAULT_CELLS } from '../../common/constants/game.consts';
+import { CellState } from '../../models/game.model';
 
 import { SignalsGameComponent } from './signals-game.component';
-import { CellState } from '../../models/game.model';
 
 describe('Component: SignalsGame', () => {
     let component: SignalsGameComponent;
