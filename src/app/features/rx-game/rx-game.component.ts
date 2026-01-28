@@ -21,7 +21,6 @@ import { FieldInputDirective } from '../../common/components/form-field/directiv
 import { FormFieldComponent } from '../../common/components/form-field/form-field.component';
 import { FormFieldErrorsComponent } from '../../common/components/form-field-errors/form-field-errors.component';
 import { AbstractGame } from '../../common/abstract-classes/abstract-game';
-import { fillCellItemByIndex, getRandomCellIndex } from '../../common/helpers/game.helpers';
 import { initialState, WIN_SCORE } from '../../common/constants/game.consts';
 import { CellState, GameState } from '../../models/game.model';
 
@@ -52,7 +51,7 @@ export class RxGameComponent extends AbstractGame {
     }
 
     private round$(state: GameState): Observable<GameState> {
-        const activeIndex = getRandomCellIndex(state.cells);
+        const activeIndex = this.getRandomCellIndex(state.cells);
 
         /**
          * Active round state
@@ -60,7 +59,7 @@ export class RxGameComponent extends AbstractGame {
         const activated: GameState = {
             ...state,
             activeCellIndex: activeIndex,
-            cells: fillCellItemByIndex(state.cells, activeIndex, CellState.YELLOW)
+            cells: this.fillCellItemByIndex(state.cells, activeIndex, CellState.YELLOW)
         };
 
         /**
@@ -73,7 +72,7 @@ export class RxGameComponent extends AbstractGame {
                 ...activated,
                 playerScore: activated.playerScore + 1,
                 activeCellIndex: null,
-                cells: fillCellItemByIndex(activated.cells, i, CellState.GREEN)
+                cells: this.fillCellItemByIndex(activated.cells, i, CellState.GREEN)
             }))
         );
 
@@ -85,7 +84,7 @@ export class RxGameComponent extends AbstractGame {
                 ...activated,
                 computerScore: activated.computerScore + 1,
                 activeCellIndex: null,
-                cells: fillCellItemByIndex(activated.cells, activeIndex, CellState.RED)
+                cells: this.fillCellItemByIndex(activated.cells, activeIndex, CellState.RED)
             }))
         );
 

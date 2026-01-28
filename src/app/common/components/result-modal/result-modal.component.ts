@@ -14,7 +14,7 @@ export class ResultModalComponent {
 
     public data = input<GameResult>();
 
-    protected close(result?: boolean) {
+    public close(result?: boolean) {
         this._modalService.close(result);
     }
 }
