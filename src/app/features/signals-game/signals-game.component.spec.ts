@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalService } from '../../services/modal.service';
 import { DEFAULT_CELLS } from '../../common/constants/game.consts';
 import { CellState } from '../../models/game.model';
